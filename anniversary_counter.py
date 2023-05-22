@@ -117,7 +117,7 @@ def differences_inside_set(events):
                 print("{} days between {} and {}".format(days_between(events[event1]['date'], events[event2]['date']), event1, event2))
 
 
-# In[164]:
+# In[172]:
 
 
 def age_counter_2(given_dt):
@@ -126,21 +126,26 @@ def age_counter_2(given_dt):
         if v['category'] == 'birth':
             birth_dict[k] = v['date']
 
-    for k in birth_dict.keys():
-        print("{0}'s age: {1} days".format(k, days_between(given_dt, birth_dict[k])))
-        
-    if len(birth_dict.keys()) > 1:
-        for (k1, k2) in combinations(birth_dict.keys(), 2):
-            print("Age difference between {0} and {1}: {2} days".format(k1, k2, days_between(birth_dict[k1], birth_dict[k2])))
-        print("Total age: {} days".format(sum([days_between(given_dt, birth_dict[k]) for k in birth_dict.keys()])))
+    try:
+        for k in birth_dict.keys():
+            print("{0}'s age: {1} days".format(k, days_between(given_dt, birth_dict[k])))
+
+        if len(birth_dict.keys()) > 1:
+            for (k1, k2) in combinations(birth_dict.keys(), 2):
+                print("Age difference between {0} and {1}: {2} days".format(k1, k2, days_between(birth_dict[k1], birth_dict[k2])))
+            print("Total age: {} days".format(sum([days_between(given_dt, birth_dict[k]) for k in birth_dict.keys()])))
+
+    except:
+        print("Something happens...")
 
 
 # # 3. Performing
 
-# In[165]:
+# In[175]:
 
 
 # age_counter_2(given_dt)
+# age_counter_2("")
 
 
 # In[ ]:
