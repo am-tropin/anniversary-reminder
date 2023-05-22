@@ -1,0 +1,1 @@
+1. To test FastAPI with function age_counter_2 
