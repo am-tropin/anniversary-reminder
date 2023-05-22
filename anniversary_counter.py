@@ -39,13 +39,11 @@ events
 
 # # 2. Functions
 
-# In[66]:
+# In[166]:
 
 
 def days_between(d1, d2):
-    d1 = datetime.strptime(d1, "%Y-%m-%d")
-    d2 = datetime.strptime(d2, "%Y-%m-%d")
-    return abs((d2 - d1).days)
+    return abs((datetime.strptime(d2, "%Y-%m-%d") - datetime.strptime(d1, "%Y-%m-%d")).days)
 
 def rule_multiple(dt1, dt2, n):
     if days_between(dt1.strftime('%Y-%m-%d'), dt2) % n == 0:
@@ -119,7 +117,7 @@ def differences_inside_set(events):
                 print("{} days between {} and {}".format(days_between(events[event1]['date'], events[event2]['date']), event1, event2))
 
 
-# In[153]:
+# In[164]:
 
 
 def age_counter_2(given_dt):
@@ -127,7 +125,7 @@ def age_counter_2(given_dt):
     for k, v in events.items():
         if v['category'] == 'birth':
             birth_dict[k] = v['date']
-            
+
     for k in birth_dict.keys():
         print("{0}'s age: {1} days".format(k, days_between(given_dt, birth_dict[k])))
         
@@ -138,6 +136,18 @@ def age_counter_2(given_dt):
 
 
 # # 3. Performing
+
+# In[165]:
+
+
+age_counter_2(given_dt)
+
+
+# In[ ]:
+
+
+
+
 
 # In[161]:
 
@@ -163,12 +173,6 @@ def age_counter_2(given_dt):
 
 
 # age_counter(birthday_dt_1, birthday_dt_2, given_dt)
-
-
-# In[158]:
-
-
-# age_counter_2(given_dt)
 
 
 # In[157]:
