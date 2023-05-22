@@ -140,7 +140,7 @@ def age_counter_2(given_dt):
 # In[165]:
 
 
-age_counter_2(given_dt)
+# age_counter_2(given_dt)
 
 
 # In[ ]:
