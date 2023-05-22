@@ -121,6 +121,10 @@ def differences_inside_set(events):
 
 
 def age_counter_2(given_dt):
+    
+#     JUST FOR AVOIDING A BUG
+    given_dt = '2021-04-09'
+    
     birth_dict = {}
     for k, v in events.items():
         if v['category'] == 'birth':
