@@ -24,7 +24,7 @@ async def root():
 
 @app.get("/{date}")
 async def get_anniv(date: str):
-    return {"Recommended movies:": age_counter_2(date)}
+    return {"Age counter:": age_counter_2(date)}
 
 @app.get("/date/{form}")
 def form_post(request: Request):
