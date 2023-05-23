@@ -22,9 +22,9 @@ templates = Jinja2Templates(directory="templates/")
 async def root():
     return "Welcome to the Anniversary Reminder!"
 
-@app.get("/{date}")
-async def get_anniv(date: str):
-    return {"Age counter:": age_counter_2(date)}
+# @app.get("/{date}")
+# async def get_anniv(date: str):
+#     return {"Age counter:": age_counter_2(date)}
 
 @app.get("/date/{form}")
 def form_post(request: Request):
