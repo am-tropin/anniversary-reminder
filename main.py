@@ -37,5 +37,5 @@ def form_post(request: Request):
 @app.post("/date/{form_some_day}")
 def form_post(request: Request, date: str = Form(...)):
     result = some_day_counter(date)
-    return templates.TemplateResponse('form.html', context={'request': request, 'result': result.to_html()})
+    return templates.TemplateResponse('form_some_day.html', context={'request': request, 'result': result.to_html()})
 
