@@ -94,12 +94,6 @@ def range_calendar(dt_start, dt_end):
 # In[131]:
 
 
-def age_counter(birthday_dt_1, birthday_dt_2, given_dt):
-    print("Age difference: {} days".format(days_between(birthday_dt_1, birthday_dt_2)))
-    print("Elizabeth II age: {} days".format(days_between(given_dt, birthday_dt_1)))
-    print("Prince Philip age: {} days".format(days_between(given_dt, birthday_dt_2)))
-    print("Total age: {} days".format(days_between(given_dt, birthday_dt_2) + days_between(given_dt, birthday_dt_1)))
-
 def total_age_anniversaries(birthday_dt_1, birthday_dt_2, start_dt, end_dt):
     for dt in daterange(datetime.strptime(start_dt, "%Y-%m-%d"), datetime.strptime(end_dt, "%Y-%m-%d")):
         if (
@@ -118,13 +112,10 @@ def differences_inside_set(events):
                 print("{} days between {} and {}".format(days_between(events[event1]['date'], events[event2]['date']), event1, event2))
 
 
-# In[204]:
+# In[208]:
 
 
-def age_counter_2(given_dt):
-    
-#     JUST FOR AVOIDING A BUG
-#     given_dt = '2021-04-09'
+def age_counter(given_dt):
     
     birth_dict = {}
     for k, v in events.items():
@@ -135,16 +126,17 @@ def age_counter_2(given_dt):
     
     try:
         for k in birth_dict.keys():
-            print("{0}'s age: {1} days".format(k, days_between(given_dt, birth_dict[k])))
+#             print("{0}'s age: {1} days".format(k, days_between(given_dt, birth_dict[k])))
             output_dict["{0}'s age".format(k)] = days_between(given_dt, birth_dict[k])
 
         if len(birth_dict.keys()) > 1:
             for (k1, k2) in combinations(birth_dict.keys(), 2):
-                print("Age difference between {0} and {1}: {2} days".format(k1, k2, days_between(birth_dict[k1], birth_dict[k2])))
+#                 print("Age difference between {0} and {1}: {2} days".format(k1, k2, days_between(birth_dict[k1], birth_dict[k2])))
                 output_dict["Age difference between {0} and {1}".format(k1, k2)] = days_between(birth_dict[k1], birth_dict[k2])
-            print("Total age: {} days".format(sum([days_between(given_dt, birth_dict[k]) for k in birth_dict.keys()])))
+#             print("Total age: {} days".format(sum([days_between(given_dt, birth_dict[k]) for k in birth_dict.keys()])))
             output_dict["Total age"] = sum([days_between(given_dt, birth_dict[k]) for k in birth_dict.keys()])
-
+        print("Ages were calculated.")
+    
     except:
         print("Something happens...")
 
@@ -157,11 +149,17 @@ def age_counter_2(given_dt):
 
 # # 3. Performing
 
-# In[207]:
+# In[211]:
 
 
-# age_counter_2(given_dt)
-# age_counter_2("")
+# age_counter(given_dt)
+# age_counter("")
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
@@ -188,12 +186,6 @@ def age_counter_2(given_dt):
 # birthday_dt_1 = events["Elizabeth"]['date']
 # birthday_dt_2 = events["Philip"]['date']
 # given_dt = events["Philip's death"]['date']
-
-
-# In[159]:
-
-
-# age_counter(birthday_dt_1, birthday_dt_2, given_dt)
 
 
 # In[157]:
@@ -224,7 +216,7 @@ def age_counter_2(given_dt):
 
 
 if __name__=="__main__":
-    print(age_counter_2('2021-04-09'))
+    print(age_counter('2021-04-09'))
 
 
 # In[ ]:
