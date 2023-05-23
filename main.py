@@ -31,10 +31,10 @@ def form_post(request: Request):
     result = "Write a date in format YYYY-MM-DD"
     return templates.TemplateResponse('form.html', context={'request': request, 'result': result})
 
-# @app.post("/date/{form}")
-# def form_post(request: Request, date: str = Form(...)):
-#     result = age_counter_2(date)
-#     return templates.TemplateResponse('form.html', context={'request': request, 'result': result.to_html()})
+@app.post("/date/{form}")
+def form_post(request: Request, date: str = Form(...)):
+    result = age_counter_2(date)
+    return templates.TemplateResponse('form.html', context={'request': request, 'result': result.to_html()})
 
 
 
