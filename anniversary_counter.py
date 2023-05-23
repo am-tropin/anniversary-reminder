@@ -43,6 +43,7 @@ events
 
 
 def days_between(d1, d2):
+    print(d1, type(d1))
     return abs((datetime.strptime(d2, "%Y-%m-%d") - datetime.strptime(d1, "%Y-%m-%d")).days)
 
 def rule_multiple(dt1, dt2, n):
