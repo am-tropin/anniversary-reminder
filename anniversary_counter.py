@@ -39,11 +39,11 @@ events
 
 # # 2. Functions
 
-# In[166]:
+# In[180]:
 
 
 def days_between(d1, d2):
-    print(d1, type(d1))
+#     print(d1, type(d1))
     return abs((datetime.strptime(d2, "%Y-%m-%d") - datetime.strptime(d1, "%Y-%m-%d")).days)
 
 def rule_multiple(dt1, dt2, n):
@@ -118,7 +118,7 @@ def differences_inside_set(events):
                 print("{} days between {} and {}".format(days_between(events[event1]['date'], events[event2]['date']), event1, event2))
 
 
-# In[172]:
+# In[204]:
 
 
 def age_counter_2(given_dt):
@@ -131,22 +131,33 @@ def age_counter_2(given_dt):
         if v['category'] == 'birth':
             birth_dict[k] = v['date']
 
+    output_dict = {}
+    
     try:
         for k in birth_dict.keys():
             print("{0}'s age: {1} days".format(k, days_between(given_dt, birth_dict[k])))
+            output_dict["{0}'s age".format(k)] = days_between(given_dt, birth_dict[k])
 
         if len(birth_dict.keys()) > 1:
             for (k1, k2) in combinations(birth_dict.keys(), 2):
                 print("Age difference between {0} and {1}: {2} days".format(k1, k2, days_between(birth_dict[k1], birth_dict[k2])))
+                output_dict["Age difference between {0} and {1}".format(k1, k2)] = days_between(birth_dict[k1], birth_dict[k2])
             print("Total age: {} days".format(sum([days_between(given_dt, birth_dict[k]) for k in birth_dict.keys()])))
+            output_dict["Total age"] = sum([days_between(given_dt, birth_dict[k]) for k in birth_dict.keys()])
 
     except:
         print("Something happens...")
 
+    if len(output_dict):
+        return pd.DataFrame.from_dict(output_dict, orient='index', columns=['days'])
+    else:
+        return "Sorry, there is no answer :("
+    
+
 
 # # 3. Performing
 
-# In[175]:
+# In[207]:
 
 
 # age_counter_2(given_dt)
