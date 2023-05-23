@@ -240,57 +240,11 @@ def some_day_counter(dt_str=None):
     
 
 
-# In[89]:
+# In[132]:
 
 
-def range_calendar(start_dt_str, end_dt_str):
+def range_calendar(start_dt_str, end_dt_str, n=1000):
     """Returns anniversaries from `start_dt_str` to `end_dt_str`.
-    
-    Args:
-        start_dt_str (str): The string date in `DATE_FORMAT` format.
-        end_dt_str (str): The string date in `DATE_FORMAT` format.
-    
-    Returns:
-        DataFrame
-    """
-    start_dt = stod(start_dt_str)
-    end_dt = stod(end_dt_str)
-    start_dt, end_dt = sorted([start_dt, end_dt])
-    
-    output_dict = {}
-    
-    try:
-        for dt in daterange(start_dt, end_dt):
-            for event in events.keys():
-                event_dt = events[event]['dt']
-                if (
-                    (rule_multiple(dt, event_dt, 100) and events[event]['importance'] <= 2)
-                    or
-                    (rule_multiple(dt, event_dt, 1000) and events[event]['importance'] == 3)
-                ):
-                    output_dict[dt.strftime('%Y-%m-%d')] = {'event': event, 
-                                                            'amount': days_between(dt, event_dt), 
-                                                            'unit': 'day'}
-                if rule_anniversary(dt, event_dt):
-                    output_dict[dt.strftime('%Y-%m-%d')] = {'event': event, 
-                                                            'amount': rule_anniversary(dt, event_dt), 
-                                                            'unit': 'year'}
-    
-    except:
-        print("Something wrong happened...")
-
-    if len(output_dict):
-        return pd.DataFrame.from_dict(output_dict, orient='index', columns=['event', 'amount', 'unit'])
-    else:
-        return "Sorry, there is no answer :("
-
-
-# In[90]:
-
-
-def total_age_anniversaries(start_dt_str, end_dt_str, n=1000):
-    """Returns dates from `start_dt` to `end_dt` in which total age (in days) 
-    is close to be multiple of `n`.
     
     Args:
         start_dt_str (str): The string date in `DATE_FORMAT` format.
@@ -305,20 +259,82 @@ def total_age_anniversaries(start_dt_str, end_dt_str, n=1000):
     start_dt, end_dt = sorted([start_dt, end_dt])
     
     birth_dict = birth_dates()
-    output_dict = {}
+    output_df_set = []
     
     try:
         for dt in daterange(start_dt, end_dt):
+            for event in events.keys():
+                event_dt = events[event]['dt']
+                if (
+                    (rule_multiple(dt, event_dt, 100) and events[event]['importance'] <= 2)
+                    or
+                    (rule_multiple(dt, event_dt, 1000) and events[event]['importance'] == 3)
+                ):
+                    temp_dict = {'date': dt.strftime('%Y-%m-%d'),
+                                 'event': event, 
+                                 'amount': days_between(dt, event_dt), 
+                                 'unit': 'day'}
+                    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+                    output_df_set.append(temp_df)
+                if rule_anniversary(dt, event_dt):
+                    temp_dict = {'date': dt.strftime('%Y-%m-%d'),
+                                 'event': event, 
+                                 'amount': rule_anniversary(dt, event_dt), 
+                                 'unit': 'year'}
+                    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+                    output_df_set.append(temp_df)
             total_age = sum([days_between(dt, birth_dict[k]) for k in birth_dict.keys()])
             if n >= 10 and total_age % n in range(len(birth_dict)):
-                output_dict[dt.strftime('%Y-%m-%d')] = total_age
+                temp_dict = {'date': dt.strftime('%Y-%m-%d'),
+                             'event': 'Total age ({})'.format(", ".join(birth_dict.keys())), 
+                             'amount': total_age, 
+                             'unit': 'day'}
+                temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+                output_df_set.append(temp_df)
+    
     except:
         print("Something wrong happened...")
-    
-    if len(output_dict):
-        return pd.DataFrame.from_dict(output_dict, orient='index', columns=['days'])
+
+    if len(output_df_set):
+        return pd.concat(output_df_set).reset_index(drop=True)
     else:
         return "Sorry, there is no answer :("
+
+
+# In[90]:
+
+
+# def total_age_anniversaries(start_dt_str, end_dt_str, n=1000):
+#     """Returns dates from `start_dt` to `end_dt` in which total age (in days) 
+#     is close to be multiple of `n`.
+    
+#     Args:
+#         start_dt_str (str): The string date in `DATE_FORMAT` format.
+#         end_dt_str (str): The string date in `DATE_FORMAT` format.
+#         n (int, optional): The number for checking multiplicity (more or equal 10). Default value is 1000.
+    
+#     Returns:
+#         DataFrame
+#     """
+#     start_dt = stod(start_dt_str)
+#     end_dt = stod(end_dt_str)
+#     start_dt, end_dt = sorted([start_dt, end_dt])
+    
+#     birth_dict = birth_dates()
+#     output_dict = {}
+    
+#     try:
+#         for dt in daterange(start_dt, end_dt):
+#             total_age = sum([days_between(dt, birth_dict[k]) for k in birth_dict.keys()])
+#             if n >= 10 and total_age % n in range(len(birth_dict)):
+#                 output_dict[dt.strftime('%Y-%m-%d')] = total_age
+#     except:
+#         print("Something wrong happened...")
+    
+#     if len(output_dict):
+#         return pd.DataFrame.from_dict(output_dict, orient='index', columns=['days'])
+#     else:
+#         return "Sorry, there is no answer :("
     
 
 
@@ -379,7 +395,7 @@ some_day_counter() # ok
 # ok
 
 
-# In[82]:
+# In[114]:
 
 
 # dt_str = events["Philip's death"]['date']
@@ -391,15 +407,15 @@ some_day_counter() # ok
 # ok
 
 
-# In[88]:
+# In[133]:
 
 
-range_calendar('2022-01-01', '2022-05-01') 
+range_calendar('2021-01-01', '2021-03-01') 
 
 # ok
 
 
-# In[33]:
+# In[113]:
 
 
 # start_dt = events['Engagement']['date']

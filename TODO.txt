@@ -1,3 +1,2 @@
-1. To test FastAPI with multiple functions
+1. To add the 3rd function into FastAPI
 2. To write tests
-3. To unite range_calendar() and total_age_anniversaries()?

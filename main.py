@@ -4,7 +4,7 @@
 # In[4]:
 
 
-from functions_store import some_day_counter, range_calendar, total_age_anniversaries, differences_inside_set
+from functions_store import some_day_counter, range_calendar, differences_inside_set
 
 # API
 from fastapi import FastAPI, Request, Form
@@ -12,6 +12,7 @@ from fastapi.templating import Jinja2Templates
 
 
 # In[6]:
+
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates/")
@@ -54,3 +55,4 @@ def form_post_range(request: Request):
 def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(...)):
     result = range_calendar(date1, date2)
     return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result.to_html()})
+
