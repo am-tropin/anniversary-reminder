@@ -86,7 +86,7 @@ def daterange(start_dt, end_dt):
         yield start_dt + timedelta(n)
 
 
-# In[13]:
+# In[178]:
 
 
 # rules for detecting anniversaries
@@ -187,7 +187,7 @@ def some_day_counter(dt_str=None):
     
 
 
-# In[143]:
+# In[179]:
 
 
 def range_calendar(start_dt_str, end_dt_str, n=100):
@@ -213,9 +213,9 @@ def range_calendar(start_dt_str, end_dt_str, n=100):
             for event in events.keys():
                 event_dt = events[event]['dt']
                 if dt >= event_dt and n >= 10 and (
-                    (rule_multiple(dt, event_dt, n) and events[event]['importance'] <= 2)
+                    (rule_multiple(event_dt, dt, n) and events[event]['importance'] <= 2)
                     or
-                    (rule_multiple(dt, event_dt, 1000) and events[event]['importance'] == 3)
+                    (rule_multiple(event_dt, dt, 1000) and events[event]['importance'] == 3)
                 ):
                     temp_dict = {'date': dt.strftime('%Y-%m-%d'),
                                  'event': event, 
@@ -305,34 +305,11 @@ today_dt_str
 # ok
 
 
-# In[114]:
-
-
-# dt_str = events["Philip's death"]['date']
-
-# age_counter()
-# age_counter(dt_str)
-# age_counter("")
-
-# ok
-
-
-# In[144]:
+# In[180]:
 
 
 # range_calendar('2021-01-01', '2021-03-01') 
-
-# ok
-
-
-# In[113]:
-
-
-# start_dt = events['Engagement']['date']
-# end_dt = events["Philip's death"]['date']
-
-# total_age_anniversaries(start_dt, end_dt)
-# total_age_anniversaries(start_dt, "")
+# range_calendar('2023-05-24', '2023-08-31', 100) 
 
 # ok
 
