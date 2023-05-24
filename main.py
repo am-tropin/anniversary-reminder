@@ -62,3 +62,7 @@ def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(
 @app.get("/counter/{date}")
 async def get_counter(date: str):
     return some_day_counter(date).to_dict()
+
+@app.get("/counter_table/{date}")
+async def get_counter_table(date: str):
+    return some_day_counter(date)
