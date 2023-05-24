@@ -4,7 +4,7 @@
 # In[4]:
 
 
-from functions_store import some_day_counter, range_calendar, differences_inside_set
+from functions_store import some_day_counter, range_calendar, internal_counter
 
 # API
 from fastapi import FastAPI, Request, Form
@@ -21,6 +21,21 @@ templates = Jinja2Templates(directory="templates/")
 @app.get("/")
 async def root():
     return "Welcome to the Anniversary Reminder!"
+
+
+# without html
+
+@app.get("/some_day_counter/{date}")
+async def get_some_day_counter(date: str):
+    return some_day_counter(date).to_dict()
+
+@app.get("/range_calendar/{date}")
+async def get_range_calendar(date1: str, date2: str, n: int):
+    return range_calendar(date1, date2, n).to_dict()
+
+@app.get("/internal_counter/{date}")
+async def get_internal_counter(n: int):
+    return internal_counter(n).to_dict()
 
 
 # for some day
@@ -56,13 +71,3 @@ def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(
     result = range_calendar(date1, date2)
     return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result.to_html()})
 
-
-# without html
-
-@app.get("/counter/{date}")
-async def get_counter(date: str):
-    return some_day_counter(date).to_dict()
-
-@app.get("/counter_table/{date}")
-async def get_counter_table(date: str):
-    return some_day_counter(date)

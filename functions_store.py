@@ -15,7 +15,7 @@ from datetime import datetime, date, timedelta
 from itertools import combinations
 
 
-# In[6]:
+# In[146]:
 
 
 DATE_FORMAT = "%Y-%m-%d"
@@ -55,7 +55,7 @@ events
 
 
 def stod(dt_str):
-    """Converts string variable `dt_str` to date.
+    """Converts string variable `dt_str` to datetime.date.
     
     Args:
         dt_str (str): The string date in `DATE_FORMAT` format.
@@ -64,25 +64,6 @@ def stod(dt_str):
         Date
     """
     return datetime.strptime(dt_str, DATE_FORMAT).date()
-
-
-# In[11]:
-
-
-def days_between(dt1, dt2):
-    """Calculates difference between `dt1` and `dt2`.
-    
-    Args:
-        dt1 (date): The first date.
-        dt2 (date): The second date.
-        
-    Returns:
-        Boolean
-    """
-    try:
-        return abs((dt2 - dt1).days)
-    except:
-        return None
 
 
 # In[12]:
@@ -109,20 +90,20 @@ def daterange(start_dt, end_dt):
 
 
 # rules for detecting anniversaries
-# input format: date(YYYY, MM, DD) 
+# input and output format: date(YYYY, MM, DD) 
 
 def rule_multiple(dt1, dt2, n):
     """Identifies if difference between 2 dates `dt1` and `dt2` is multiple of `n`.
     
     Args:
-        dt1 (date): 
-        dt2 (date): 
+        dt1 (date): Date of event.
+        dt2 (date): Arbitrary date.
         n (int): The number of multiplicity.
         
     Returns:
         bool
     """
-    if days_between(dt1, dt2) % n == 0:
+    if dt1 < dt2 and (dt2 - dt1).days % n == 0:
         return True
     else:
         return False
@@ -131,14 +112,14 @@ def rule_anniversary(dt1, dt2):
     """Identifies if `dt1` is an anniversary of `dt2` or vice versa.
     
     Args:
-        dt1 (date): 
-        dt2 (date): 
+        dt1 (date): Date of event.
+        dt2 (date): Arbitrary date.
         
     Returns:
         int or None
     """
-    if dt1.month == dt2.month and dt1.day == dt2.day:
-        return abs(dt1.year - dt2.year)
+    if dt1 < dt2 and dt1.month == dt2.month and dt1.day == dt2.day:
+        return (dt2.year - dt1.year)
     else:
         return None
 
@@ -161,7 +142,7 @@ def birth_dates():
 
 # ## 2.2. Functions for FastAPI
 
-# In[99]:
+# In[137]:
 
 
 def some_day_counter(dt_str=None):
@@ -181,15 +162,20 @@ def some_day_counter(dt_str=None):
             dt = TODAY_DT
         else:
             dt = stod(dt_str)
-            
-        for event in events.keys():
-            output_dict["Since {0}".format(event)] = days_between(dt, events[event]['dt'])
     
         for k in birth_dict.keys():
-            output_dict["Age: {0}".format(k)] = days_between(dt, birth_dict[k])
+            if dt >= birth_dict[k]:
+                output_dict["Age: {0}".format(k)] = (dt - birth_dict[k]).days
 
         if len(birth_dict.keys()) > 1:
-            output_dict["Age: total"] = sum([days_between(dt, birth_dict[k]) for k in birth_dict.keys()])
+            output_dict["Age: total"] = sum([(dt - birth_dict[k]).days for k in birth_dict.keys() if dt >= birth_dict[k]])
+            
+        for event in events.keys():
+            if events[event]['category'] != 'birth':
+                if dt >= events[event]['dt']:
+                    output_dict["From {0}".format(event)] = (dt - events[event]['dt']).days
+                else:
+                    output_dict["Before {0}".format(event)] = (events[event]['dt'] - dt).days
 
     except:
         print("Something wrong happened...")
@@ -201,55 +187,16 @@ def some_day_counter(dt_str=None):
     
 
 
-# In[81]:
+# In[143]:
 
 
-# def age_counter(dt_str=None):
-#     """Returns dataframe with data about ages (in days) at `dt_str`.
-    
-#     Args:
-#         dt_str (str, optional): The string date in `DATE_FORMAT` format. Default value is None and uses for today's date.
-    
-#     Returns:
-#         DataFrame
-#     """
-#     birth_dict = birth_dates()
-#     output_dict = {}
-    
-#     try:
-#         if dt_str is None:
-#             dt = TODAY_DT
-#         else:
-#             dt = stod(dt_str)
-            
-#         for k in birth_dict.keys():
-#             output_dict["{0}'s age".format(k)] = days_between(dt, birth_dict[k])
-
-#         if len(birth_dict.keys()) > 1:
-#             output_dict["Total age"] = sum([days_between(dt, birth_dict[k]) for k in birth_dict.keys()])
-#             for (k1, k2) in combinations(birth_dict.keys(), 2):
-#                 output_dict["Age difference between {0} and {1}".format(k1, k2)] = days_between(birth_dict[k1], birth_dict[k2])
-    
-#     except:
-#         print("Something wrong happened...")
-
-#     if len(output_dict):
-#         return pd.DataFrame.from_dict(output_dict, orient='index', columns=['days'])
-#     else:
-#         return "Sorry, there is no answer :("
-    
-
-
-# In[132]:
-
-
-def range_calendar(start_dt_str, end_dt_str, n=1000):
+def range_calendar(start_dt_str, end_dt_str, n=100):
     """Returns anniversaries from `start_dt_str` to `end_dt_str`.
     
     Args:
         start_dt_str (str): The string date in `DATE_FORMAT` format.
         end_dt_str (str): The string date in `DATE_FORMAT` format.
-        n (int, optional): The number for checking multiplicity (more or equal 10). Default value is 1000.
+        n (int, optional): The number for checking multiplicity (more or equal 10). Default value is 100.
     
     Returns:
         DataFrame
@@ -265,14 +212,14 @@ def range_calendar(start_dt_str, end_dt_str, n=1000):
         for dt in daterange(start_dt, end_dt):
             for event in events.keys():
                 event_dt = events[event]['dt']
-                if (
-                    (rule_multiple(dt, event_dt, 100) and events[event]['importance'] <= 2)
+                if dt >= event_dt and n >= 10 and (
+                    (rule_multiple(dt, event_dt, n) and events[event]['importance'] <= 2)
                     or
                     (rule_multiple(dt, event_dt, 1000) and events[event]['importance'] == 3)
                 ):
                     temp_dict = {'date': dt.strftime('%Y-%m-%d'),
                                  'event': event, 
-                                 'amount': days_between(dt, event_dt), 
+                                 'amount': (dt - event_dt).days, 
                                  'unit': 'day'}
                     temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
                     output_df_set.append(temp_df)
@@ -283,7 +230,7 @@ def range_calendar(start_dt_str, end_dt_str, n=1000):
                                  'unit': 'year'}
                     temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
                     output_df_set.append(temp_df)
-            total_age = sum([days_between(dt, birth_dict[k]) for k in birth_dict.keys()])
+            total_age = sum([(dt - birth_dict[k]).days for k in birth_dict.keys() if dt >= birth_dict[k]])
             if n >= 10 and total_age % n in range(len(birth_dict)):
                 temp_dict = {'date': dt.strftime('%Y-%m-%d'),
                              'event': 'Total age ({})'.format(", ".join(birth_dict.keys())), 
@@ -301,51 +248,14 @@ def range_calendar(start_dt_str, end_dt_str, n=1000):
         return "Sorry, there is no answer :("
 
 
-# In[90]:
+# In[171]:
 
 
-# def total_age_anniversaries(start_dt_str, end_dt_str, n=1000):
-#     """Returns dates from `start_dt` to `end_dt` in which total age (in days) 
-#     is close to be multiple of `n`.
-    
-#     Args:
-#         start_dt_str (str): The string date in `DATE_FORMAT` format.
-#         end_dt_str (str): The string date in `DATE_FORMAT` format.
-#         n (int, optional): The number for checking multiplicity (more or equal 10). Default value is 1000.
-    
-#     Returns:
-#         DataFrame
-#     """
-#     start_dt = stod(start_dt_str)
-#     end_dt = stod(end_dt_str)
-#     start_dt, end_dt = sorted([start_dt, end_dt])
-    
-#     birth_dict = birth_dates()
-#     output_dict = {}
-    
-#     try:
-#         for dt in daterange(start_dt, end_dt):
-#             total_age = sum([days_between(dt, birth_dict[k]) for k in birth_dict.keys()])
-#             if n >= 10 and total_age % n in range(len(birth_dict)):
-#                 output_dict[dt.strftime('%Y-%m-%d')] = total_age
-#     except:
-#         print("Something wrong happened...")
-    
-#     if len(output_dict):
-#         return pd.DataFrame.from_dict(output_dict, orient='index', columns=['days'])
-#     else:
-#         return "Sorry, there is no answer :("
-    
-
-
-# In[105]:
-
-
-def differences_inside_set(n=100):
-    """Returns DataFrame with round dates (in days) between events in events dictionary.
+def internal_counter(n=1):
+    """Calculates distances between events in events dictionary with filtering by distances divided by `n`.
     
     Args:
-        n (int, optional): The base of round dates. Default value is 100. 
+        n (int, optional): The base of round dates. Default value is 1 for returning distances between all pairs of events. 
         
     Returns:
         DataFrame
@@ -354,17 +264,17 @@ def differences_inside_set(n=100):
     inside_dict = {}
 
     try:
-        if len(events.keys()) > 1:
-            for (event1, event2) in combinations(events.keys(), 2):
-                if (
-                    days_between(events[event1]['dt'], events[event2]['dt']) % n == 0 and 
-                    event1 != event2 and 
-                    events[event1]['dt'] < events[event2]['dt']
-                ):
-                    inside_dict["Between {} and {}".format(event1, event2)] = days_between(events[event1]['dt'], events[event2]['dt'])
         if len(birth_dict.keys()) > 1:
             for (k1, k2) in combinations(birth_dict.keys(), 2):
-                inside_dict["Age: difference between {0} and {1}".format(k1, k2)] = days_between(birth_dict[k1], birth_dict[k2])
+                if abs((birth_dict[k1] - birth_dict[k2]).days) % n == 0:
+                    inside_dict["Age difference between {0} and {1}".format(k1, k2)] = abs((birth_dict[k1] - birth_dict[k2]).days)
+        if len(events.keys()) > 1:
+            for (event1, event2) in combinations(events.keys(), 2):
+                if (events[event1]['category'], events[event2]['category']) != ('birth', 'birth') and (
+                    abs((events[event1]['dt'] - events[event2]['dt']).days) % n == 0 and 
+                    events[event1]['dt'] < events[event2]['dt']
+                ):
+                    inside_dict["From {} to {}".format(event1, event2)] = abs((events[event1]['dt'] - events[event2]['dt']).days)
 
     except:
         print("Something wrong happened...")
@@ -378,18 +288,18 @@ def differences_inside_set(n=100):
 
 # # 3. Performing
 
-# In[63]:
+# In[147]:
 
 
 today_dt_str = TODAY_DT.strftime(DATE_FORMAT)
 today_dt_str
 
 
-# In[100]:
+# In[142]:
 
 
-some_day_counter() # ok
-# some_day_counter('2023-05-22') # ok
+# some_day_counter() # ok
+# some_day_counter('2020-05-23') # ok
 # some_day_counter('kek') # ok
 
 # ok
@@ -407,10 +317,10 @@ some_day_counter() # ok
 # ok
 
 
-# In[133]:
+# In[144]:
 
 
-range_calendar('2021-01-01', '2021-03-01') 
+# range_calendar('2021-01-01', '2021-03-01') 
 
 # ok
 
@@ -427,18 +337,13 @@ range_calendar('2021-01-01', '2021-03-01')
 # ok
 
 
-# In[106]:
+# In[170]:
 
 
-# differences_inside_set()
+# internal_counter()
+# internal_counter(100)
 
 # ok
-
-
-# In[ ]:
-
-
-
 
 
 # In[ ]:
@@ -468,11 +373,11 @@ range_calendar('2021-01-01', '2021-03-01')
 
 
 
-# In[29]:
+# In[136]:
 
 
 if __name__=="__main__":
-    print(age_counter('2021-04-09'))
+    print(some_day_counter('2021-04-09'))
 
 
 # In[ ]:
