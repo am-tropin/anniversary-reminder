@@ -56,3 +56,9 @@ def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(
     result = range_calendar(date1, date2)
     return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result.to_html()})
 
+
+# without html
+
+@app.get("/counter/{date}")
+async def get_counter(date: str):
+    return some_day_counter(date).to_dict()
