@@ -29,11 +29,11 @@ async def root():
 async def get_some_day_counter(date: str):
     return some_day_counter(date).to_dict()
 
-@app.get("/range_calendar/{date}")
+@app.get("/range_calendar/{date1}_{date2}_{n}")
 async def get_range_calendar(date1: str, date2: str, n: int):
-    return range_calendar(date1, date2, n).to_dict()
+    return range_calendar(date1, date2, n).transpose().to_dict()
 
-@app.get("/internal_counter/{date}")
+@app.get("/internal_counter/{n}")
 async def get_internal_counter(n: int):
     return internal_counter(n).to_dict()
 
