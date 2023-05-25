@@ -57,8 +57,8 @@ def form_post(request: Request, date: str = Form(...)):
 # for range
 
 @app.get("/{date1}_{date2}")
-async def get_anniv_for_range(date1: str, date2: str):
-    return {"Anniversaries in the range:": range_calendar(date1, date2)}
+async def get_anniv_for_range(date1: str, date2: str, n: int):
+    return {"Anniversaries in the range:": range_calendar(date1, date2, n)}
 
 @app.get("/range/{form}")
 def form_post_range(request: Request):
@@ -66,9 +66,9 @@ def form_post_range(request: Request):
     return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result})
 
 @app.post("/range/{form}")
-def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(...)):
-    result = range_calendar(date1, date2)
-    return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result.transpose().to_html()})
+def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(...), n: int = Form(...)):
+    result = range_calendar(date1, date2, n).transpose()
+    return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result.to_html()})
 
 
 # for internal
