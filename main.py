@@ -13,7 +13,6 @@ from fastapi.templating import Jinja2Templates
 
 # In[6]:
 
-
 app = FastAPI()
 templates = Jinja2Templates(directory="templates/")
 
@@ -44,12 +43,12 @@ async def get_internal_counter(n: int):
 async def get_anniv_for_some_day(date: str):
     return {"Duration to the date:": some_day_counter(date)}
 
-@app.get("/date/{form_some_day}")
+@app.get("/some_day/{form}")
 def form_post(request: Request):
     result = "Write a date as YYYY-MM-DD"
     return templates.TemplateResponse('form_some_day.html', context={'request': request, 'result': result})
 
-@app.post("/date/{form_some_day}")
+@app.post("/some_day/{form}")
 def form_post(request: Request, date: str = Form(...)):
     result = some_day_counter(date)
     return templates.TemplateResponse('form_some_day.html', context={'request': request, 'result': result.to_html()})
@@ -61,13 +60,29 @@ def form_post(request: Request, date: str = Form(...)):
 async def get_anniv_for_range(date1: str, date2: str):
     return {"Anniversaries in the range:": range_calendar(date1, date2)}
 
-@app.get("/date1_date2/{form_range}")
+@app.get("/range/{form}")
 def form_post_range(request: Request):
     result = "Write dates as YYYY-MM-DD"
     return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result})
 
-@app.post("/date1_date2/{form_range}")
+@app.post("/range/{form}")
 def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(...)):
     result = range_calendar(date1, date2)
-    return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result.to_html()})
+    return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result.transpose().to_html()})
 
+
+# for internal
+
+@app.get("/{n}")
+async def get_anniv_for_internal(n: int):
+    return {"Duration to the date:": internal_counter(n)}
+
+@app.get("/internal/{form}")
+def form_post_internal(request: Request):
+    result = "Write an integer number"
+    return templates.TemplateResponse('form_internal.html', context={'request': request, 'result': result})
+
+@app.post("/internal/{form}")
+def form_post_internal(request: Request, n: int = Form(...)):
+    result = internal_counter(n)
+    return templates.TemplateResponse('form_internal.html', context={'request': request, 'result': result.to_html()})
