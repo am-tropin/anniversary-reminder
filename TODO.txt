@@ -1,2 +1,1 @@
-1. To add the 3rd function into FastAPI
-2. To write tests
+1. To write tests
