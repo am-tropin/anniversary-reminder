@@ -62,12 +62,12 @@ async def get_anniv_for_range(date1: str, date2: str, n: int):
 
 @app.get("/range/{form}")
 def form_post_range(request: Request):
-    result = "Write dates as YYYY-MM-DD"
+    result = "Write start and end dates as YYYY-MM-DD and integer base of miltiplicity n (not less than 10)"
     return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result})
 
 @app.post("/range/{form}")
 def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(...), n: int = Form(...)):
-    result = range_calendar(date1, date2, n).transpose()
+    result = range_calendar(date1, date2, n)
     return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result.to_html()})
 
 
