@@ -39,7 +39,7 @@ async def get_internal_counter(n: int):
 
 # for some day
 
-@app.get("/{date}")
+@app.get("/some_day_html/{date}")
 async def get_anniv_for_some_day(date: str):
     return {"Duration to the date:": some_day_counter(date)}
 
@@ -56,7 +56,7 @@ def form_post(request: Request, date: str = Form(...)):
 
 # for range
 
-@app.get("/{date1}_{date2}")
+@app.get("/range_html/{date1}_{date2}")
 async def get_anniv_for_range(date1: str, date2: str, n: int):
     return {"Anniversaries in the range:": range_calendar(date1, date2, n)}
 
@@ -73,7 +73,7 @@ def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(
 
 # for internal
 
-@app.get("/{n}")
+@app.get("/internal_html/{n}")
 async def get_anniv_for_internal(n: int):
     return {"Duration to the date:": internal_counter(n)}
 
