@@ -28,9 +28,9 @@ async def root():
 async def get_some_day_counter(date: str):
     return some_day_counter(date).to_dict()
 
-@app.get("/range_calendar/{date1}_{date2}_{n}")
-async def get_range_calendar(date1: str, date2: str, n: int):
-    return range_calendar(date1, date2, n).transpose().to_dict()
+@app.get("/range_calendar/{date1}_{date2}")
+async def get_range_calendar(date1: str, date2: str):
+    return range_calendar(date1, date2).transpose().to_dict()
 
 @app.get("/internal_counter/{n}")
 async def get_internal_counter(n: int):
@@ -57,17 +57,17 @@ def form_post(request: Request, date: str = Form(...)):
 # for range
 
 @app.get("/range_html/{date1}_{date2}")
-async def get_anniv_for_range(date1: str, date2: str, n: int):
-    return {"Anniversaries in the range:": range_calendar(date1, date2, n)}
+async def get_anniv_for_range(date1: str, date2: str):
+    return {"Anniversaries in the range:": range_calendar(date1, date2)}
 
 @app.get("/range/{form}")
 def form_post_range(request: Request):
-    result = "Write start and end dates as YYYY-MM-DD and integer base of miltiplicity n (not less than 10)"
+    result = "Write start and end dates as YYYY-MM-DD"
     return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result})
 
 @app.post("/range/{form}")
-def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(...), n: int = Form(...)):
-    result = range_calendar(date1, date2, n)
+def form_post_range(request: Request, date1: str = Form(...), date2: str = Form(...)):
+    result = range_calendar(date1, date2)
     return templates.TemplateResponse('form_range.html', context={'request': request, 'result': result.to_html()})
 
 

@@ -86,27 +86,10 @@ def daterange(start_dt, end_dt):
         yield start_dt + timedelta(n)
 
 
-# In[178]:
+# In[188]:
 
 
 # rules for detecting anniversaries
-# input and output format: date(YYYY, MM, DD) 
-
-def rule_multiple(dt1, dt2, n):
-    """Identifies if difference between 2 dates `dt1` and `dt2` is multiple of `n`.
-    
-    Args:
-        dt1 (date): Date of event.
-        dt2 (date): Arbitrary date.
-        n (int): The number of multiplicity.
-        
-    Returns:
-        bool
-    """
-    if dt1 < dt2 and (dt2 - dt1).days % n == 0:
-        return True
-    else:
-        return False
 
 def rule_anniversary(dt1, dt2):
     """Identifies if `dt1` is an anniversary of `dt2` or vice versa.
@@ -122,6 +105,20 @@ def rule_anniversary(dt1, dt2):
         return (dt2.year - dt1.year)
     else:
         return None
+
+def rule_digits(n):
+    """Identifies if number `n` consists of the same digits.
+    
+    Args:
+        n (int): The number.
+        
+    Returns:
+        bool
+    """
+    if len(set(list(str(n)))) == 1 and len(str(n)) >= 3:
+        return True
+    else:
+        return False
 
 
 # In[16]:
@@ -187,16 +184,15 @@ def some_day_counter(dt_str=None):
     
 
 
-# In[179]:
+# In[190]:
 
 
-def range_calendar(start_dt_str, end_dt_str, n=100):
+def range_calendar(start_dt_str, end_dt_str):
     """Returns anniversaries from `start_dt_str` to `end_dt_str`.
     
     Args:
         start_dt_str (str): The string date in `DATE_FORMAT` format.
         end_dt_str (str): The string date in `DATE_FORMAT` format.
-        n (int, optional): The number for checking multiplicity (more or equal 10). Default value is 100.
     
     Returns:
         DataFrame
@@ -212,17 +208,8 @@ def range_calendar(start_dt_str, end_dt_str, n=100):
         for dt in daterange(start_dt, end_dt):
             for event in events.keys():
                 event_dt = events[event]['dt']
-                if dt >= event_dt and n >= 10 and (
-                    (rule_multiple(event_dt, dt, n) and events[event]['importance'] <= 2)
-                    or
-                    (rule_multiple(event_dt, dt, 1000) and events[event]['importance'] == 3)
-                ):
-                    temp_dict = {'date': dt.strftime('%Y-%m-%d'),
-                                 'event': event, 
-                                 'amount': (dt - event_dt).days, 
-                                 'unit': 'day'}
-                    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
-                    output_df_set.append(temp_df)
+                    
+#                 dates have equal days and months
                 if rule_anniversary(dt, event_dt):
                     temp_dict = {'date': dt.strftime('%Y-%m-%d'),
                                  'event': event, 
@@ -230,8 +217,48 @@ def range_calendar(start_dt_str, end_dt_str, n=100):
                                  'unit': 'year'}
                     temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
                     output_df_set.append(temp_df)
+                
+#                 day amount is divided by 100 or 1000 
+                if dt > event_dt and (
+                    ((dt - event_dt).days % 100 == 0 and events[event]['importance'] <= 2)
+                    or
+                    ((dt - event_dt).days % 1000 == 0 and events[event]['importance'] == 3)
+                ):
+                    temp_dict = {'date': dt.strftime('%Y-%m-%d'),
+                                 'event': event, 
+                                 'amount': (dt - event_dt).days, 
+                                 'unit': 'day'}
+                    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+                    output_df_set.append(temp_df)
+                    
+#                 day amount consists of the same digits
+                if dt > event_dt and rule_digits((dt - event_dt).days):
+                    temp_dict = {'date': dt.strftime('%Y-%m-%d'),
+                                 'event': event, 
+                                 'amount': (dt - event_dt).days, 
+                                 'unit': 'day'}
+                    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+                    output_df_set.append(temp_df)
+                    
+#                 week amount is divided by 100 or 1000 or 
+                if dt > event_dt and (dt - event_dt).days % 7 == 0 and (
+                        (dt - event_dt).days % 100 == 0 
+                        or 
+                        rule_digits((dt - event_dt).days // 7)
+                    ):
+                    temp_dict = {'date': dt.strftime('%Y-%m-%d'),
+                                 'event': event, 
+                                 'amount': (dt - event_dt).days // 7, 
+                                 'unit': 'week'}
+                    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+                    output_df_set.append(temp_df)
+                    
             total_age = sum([(dt - birth_dict[k]).days for k in birth_dict.keys() if dt >= birth_dict[k]])
-            if n >= 10 and total_age % n in range(len(birth_dict)):
+            if (
+                total_age % 1000 in range(len(birth_dict))
+                or
+                rule_digits(total_age)
+               ):
                 temp_dict = {'date': dt.strftime('%Y-%m-%d'),
                              'event': 'Total age ({})'.format(", ".join(birth_dict.keys())), 
                              'amount': total_age, 
@@ -305,11 +332,10 @@ today_dt_str
 # ok
 
 
-# In[180]:
+# In[198]:
 
 
-# range_calendar('2021-01-01', '2021-03-01') 
-# range_calendar('2023-05-24', '2023-08-31', 100) 
+# range_calendar('2020-12-01', '2021-08-01') 
 
 # ok
 

@@ -1,1 +1,2 @@
 1. To write tests
+2. To describe rules
