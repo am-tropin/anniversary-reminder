@@ -86,7 +86,107 @@ def daterange(start_dt, end_dt):
         yield start_dt + timedelta(n)
 
 
-# In[188]:
+# In[283]:
+
+
+# def check_smart_roundness(n):
+#     """Identifies if number `n` is round and depends on ratio of zero tail.
+    
+#     Args:
+#         n (int): The number.
+        
+#     Returns:
+#         bool
+#     """
+#     len_n = len(str(n))
+#     len_zero = max([d for d in range(len_n) if n % (10**d) == 0])
+    
+#     if n % 100 == 0 and len_zero >= len_n / 2:
+#         return True
+#     else:
+#         return False
+    
+def check_roundness(n, p, d):
+    """Identifies if number `n` is round depending on parameters `p` and `d`.
+    
+    Args:
+        n (int): The number.
+        
+    Returns:
+        bool
+    """
+    if n >= (10**(d+1)):
+        if n % (10**(d+1)) == 0:
+            return True
+    elif (
+        (n % (10**d) == 0 and p <= 2)
+        or
+        (n % (10**(d+1)) == 0 and p == 3)
+    ):
+        return True
+    else:
+        return False
+    
+def check_same_digits(n):
+    """Identifies if number `n` consists of the same digits.
+    
+    Args:
+        n (int): The number.
+        
+    Returns:
+        bool
+    """
+    if len(set(list(str(n)))) == 1 and len(str(n)) >= 3:
+        return True
+    else:
+        return False
+
+def check_palindrome(n):
+    """Identifies if number `n` is palindrome.
+    
+    Args:
+        n (int): The number.
+        
+    Returns:
+        bool
+    """
+    if str(n) == str(n)[::-1] and len(str(n)) >= 4:
+        return True
+    else:
+        return False
+    
+def check_monotonous(n):
+    """Identifies if digit sequence of number `n` is monotonous and consistent 
+    (for instance, 1234 or 543).
+    
+    Args:
+        n (int): The number.
+        
+    Returns:
+        bool
+    """
+    dig = list(map(int, str(n)))
+    if len(dig) == len(set(dig)) and dig in [sorted(dig), sorted(dig)[::-1]] and abs(dig[0] - dig[-1]) + 1 == len(dig) and len(dig) >= 3:
+        return True
+    else:
+        return False
+    
+def check_power_of_2(n):
+    """Identifies if number `n` is a power of 2.
+    
+    Args:
+        n (int): The number.
+        
+    Returns:
+        bool
+    """
+    if (n & (n - 1) == 0):
+        return True
+    else:
+        return False
+
+
+# In[279]:
 
 
 # rules for detecting anniversaries
@@ -106,19 +206,66 @@ def rule_anniversary(dt1, dt2):
     else:
         return None
 
-def rule_digits(n):
-    """Identifies if number `n` consists of the same digits.
+def rule_days_divisibility(dt1, dt2, imp):
+    """Identifies if difference between `dt1` and `dt2` has one of described number properties.
     
     Args:
-        n (int): The number.
+        dt1 (date): Date of event.
+        dt2 (date): Arbitrary date.
+        imp (int): Importance of dt2.
         
     Returns:
-        bool
+        int or None
     """
-    if len(set(list(str(n)))) == 1 and len(str(n)) >= 3:
-        return True
+    day_s = (dt2 - dt1).days
+    
+    if dt1 < dt2 and (
+#         day amount is divided by 100 or 1000 
+        check_roundness(day_s, imp, 2)
+        or
+#         day amount consists of the same digits
+        check_same_digits(day_s)
+        or
+#         day amount is monotonous and consistent sequence
+        check_monotonous(day_s)
+        or
+#         day amount is a power of 2 and not very small
+        check_power_of_2(day_s) and day_s >= 32
+    ):
+        return day_s
     else:
-        return False
+        return None
+
+def rule_weeks_divisibility(dt1, dt2, imp):
+    """Identifies if difference between `dt1` and `dt2` is a exact number of weeks 
+    and this number has one of described number properties.
+    
+    Args:
+        dt1 (date): Date of event.
+        dt2 (date): Arbitrary date.
+        imp (int): Importance of dt2.
+        
+    Returns:
+        int or None
+    """
+    week_s = (dt2 - dt1).days // 7
+    
+    if dt1 < dt2 and (dt2 - dt1).days % 7 == 0 and (
+#         week amount is divided by 10 or 100
+        check_roundness(week_s, imp, 1)
+        or
+#         week amount consists of the same digits
+        check_same_digits(week_s)
+        or 
+#         week amount is monotonous and consistent sequence
+        check_monotonous(week_s)
+        or
+#         week amount is a power of 2 and not very small
+        check_power_of_2(week_s) and week_s >= 32
+    ):
+        return week_s
+    else:
+        return None
 
 
 # In[16]:
@@ -184,7 +331,7 @@ def some_day_counter(dt_str=None):
     
 
 
-# In[190]:
+# In[277]:
 
 
 def range_calendar(start_dt_str, end_dt_str):
@@ -208,51 +355,32 @@ def range_calendar(start_dt_str, end_dt_str):
         for dt in daterange(start_dt, end_dt):
             for event in events.keys():
                 event_dt = events[event]['dt']
+                event_imp = events[event]['importance']
                     
-#                 dates have equal days and months
-                if rule_anniversary(dt, event_dt):
+                if rule_anniversary(event_dt, dt):
                     temp_dict = {'date': dt.strftime('%Y-%m-%d'),
                                  'event': event, 
-                                 'amount': rule_anniversary(dt, event_dt), 
+                                 'amount': rule_anniversary(event_dt, dt), 
                                  'unit': 'year'}
                     temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
                     output_df_set.append(temp_df)
                 
-#                 day amount is divided by 100 or 1000 
-                if dt > event_dt and (
-                    ((dt - event_dt).days % 100 == 0 and events[event]['importance'] <= 2)
-                    or
-                    ((dt - event_dt).days % 1000 == 0 and events[event]['importance'] == 3)
-                ):
+                if rule_days_divisibility(event_dt, dt, event_imp):
                     temp_dict = {'date': dt.strftime('%Y-%m-%d'),
                                  'event': event, 
-                                 'amount': (dt - event_dt).days, 
+                                 'amount': rule_days_divisibility(event_dt, dt, event_imp), 
                                  'unit': 'day'}
                     temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
                     output_df_set.append(temp_df)
                     
-#                 day amount consists of the same digits
-                if dt > event_dt and rule_digits((dt - event_dt).days):
+                if rule_weeks_divisibility(event_dt, dt, event_imp):
                     temp_dict = {'date': dt.strftime('%Y-%m-%d'),
                                  'event': event, 
-                                 'amount': (dt - event_dt).days, 
-                                 'unit': 'day'}
-                    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
-                    output_df_set.append(temp_df)
-                    
-#                 week amount is divided by 100 or 1000 or 
-                if dt > event_dt and (dt - event_dt).days % 7 == 0 and (
-                        (dt - event_dt).days % 100 == 0 
-                        or 
-                        rule_digits((dt - event_dt).days // 7)
-                    ):
-                    temp_dict = {'date': dt.strftime('%Y-%m-%d'),
-                                 'event': event, 
-                                 'amount': (dt - event_dt).days // 7, 
+                                 'amount': rule_weeks_divisibility(event_dt, dt, event_imp), 
                                  'unit': 'week'}
                     temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
                     output_df_set.append(temp_df)
-                    
+                                                    
             total_age = sum([(dt - birth_dict[k]).days for k in birth_dict.keys() if dt >= birth_dict[k]])
             if (
                 total_age % 1000 in range(len(birth_dict))
@@ -332,10 +460,10 @@ today_dt_str
 # ok
 
 
-# In[198]:
+# In[284]:
 
 
-# range_calendar('2020-12-01', '2021-08-01') 
+# range_calendar('2021-07-01', '2021-12-01') 
 
 # ok
 
