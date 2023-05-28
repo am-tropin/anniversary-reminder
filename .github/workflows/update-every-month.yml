@@ -1,0 +1,31 @@
+name: Update a Monthly Announcement
+on:
+  schedule:
+    - cron: "45 19 28 * *"
+  workflow_dispatch:
+  
+jobs:
+  launch: # my name
+    name: Launch Range Calendar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+      - name: Run Script and Update Announcement
+        run: |
+          jupyter nbconvert --to script announcements.ipynb
+          python announcements.py
+      - name: Commit and Push Changes
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git commit -m "Updated announcement on `date` `time` with GitHub Actions"
+          git push origin main
