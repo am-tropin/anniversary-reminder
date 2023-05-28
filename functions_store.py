@@ -385,8 +385,12 @@ def range_calendar(start_dt_str, end_dt_str):
             if (
                 total_age % 1000 in range(len(birth_dict))
                 or
-                rule_digits(total_age)
-               ):
+                check_same_digits(total_age)
+                or
+                check_monotonous(total_age)
+                or
+                check_power_of_2(total_age)
+            ):
                 temp_dict = {'date': dt.strftime('%Y-%m-%d'),
                              'event': 'Total age ({})'.format(", ".join(birth_dict.keys())), 
                              'amount': total_age, 
