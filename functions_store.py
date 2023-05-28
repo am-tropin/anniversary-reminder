@@ -351,7 +351,8 @@ def range_calendar(start_dt_str, end_dt_str):
     birth_dict = birth_dates()
     output_df_set = []
     
-    try:
+#     try:
+    if 0 < 1:
         for dt in daterange(start_dt, end_dt):
             for event in events.keys():
                 event_dt = events[event]['dt']
@@ -398,8 +399,8 @@ def range_calendar(start_dt_str, end_dt_str):
                 temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
                 output_df_set.append(temp_df)
     
-    except:
-        print("Something wrong happened...")
+#     except:
+#         print("Something wrong happened...")
 
     if len(output_df_set):
         return pd.concat(output_df_set).reset_index(drop=True)
