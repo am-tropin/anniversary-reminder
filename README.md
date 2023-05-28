@@ -7,8 +7,9 @@ Libraries: pandas, datetime, itertools, fastapi
 
 
 ## Table of contents
-- [Dataset](#Dataset)
-- [Guide](#Guide)
+- [Dataset](#dataset)
+- [Guide](#guide)
+- [Rules](#rules)
 
 
 ## Dataset
@@ -47,7 +48,7 @@ You can use [a default dataset with events of Elizabeth II and Prince Philip's l
 and use on of the following boxes to get info in dictionary view:
 
 - **Get Some Day Counter**: Type a date in format YYYY-MM-DD and know how many days how many days have passed since each event.
-- **Get Range Calendar**: Type start and end dates in format YYYY-MM-DD and integer number **n** and know the anniversaries based on **n** in this date range. 
+- **Get Range Calendar**: Type start and end dates in format YYYY-MM-DD and know the anniversaries based on list of rules (see below). 
 - **Get Internal Counter**: Type integer number **n** and know all pairs of events with date distances based on **n**.
 
 Or
@@ -69,3 +70,38 @@ Or
   http://127.0.0.1:8000/internal/_
 ```
 
+Or 
+
+6. Go to web-browser and use one the following types of links to get the same info in clear dictionary view:
+
+- 6.1.
+```bash
+  http://127.0.0.1:8000/some_day_counter/2023-05-28
+```
+
+- 6.2.
+```bash
+  http://127.0.0.1:8000/range_calendar/2023-05-28_2023-10-28
+```
+
+- 6.3.
+```bash
+  http://127.0.0.1:8000/internal_counter/10
+```
+
+
+## Rules
+
+- 1. Classical anniversary in terms of **years** (your date and event date have equal day number and equal month number).
+
+- 2. Arithmetic anniversary in terms of **days**:
+    - 2.1. Round amount of days (divided by 1000 if length >= 4 (for instance, **4000**), divided by 100 if length < 4 (for instance, **500**)); 
+    - 2.2. Amount of days consisted of the same digits if length >= 3 (for instance, **111**); 
+    - 2.3. Monotonous and consistent amount of days if length >= 3 (for instance, **1234** or **987**);
+    - 2.4. Amount of days is palindrome if length >= 4 (for instance, **2552**);
+
+- 3. Arithmetic anniversary in terms of **weeks**:
+    - 2.1. Round amount of weeks (divided by 100 if length >= 3 (for instance, **400**), divided by 10 if length < 3 (for instance, **50**)); 
+    - 2.2. Amount of weeks consisted of the same digits if length >= 3 (for instance, **111**); 
+    - 2.3. Monotonous and consistent amount of weeks if length >= 3 (for instance, **1234** or **987**);
+    - 2.4. Amount of weeks is palindrome if length >= 4 (for instance, **2552**);
