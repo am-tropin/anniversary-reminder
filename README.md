@@ -4,8 +4,8 @@ The project calculates round dates basing on a list of events and provides FastA
 
 Libraries: pandas, datetime, itertools, fastapi
 
-[![codecov.io](https://codecov.io/github/am-tropin/anniversary-reminder/coverage.svg?branch=master)]
-(https://codecov.io/github/am-tropin/anniversary-reminder?branch=master)
+[![codecov.io](https://codecov.io/gh/am-tropin/anniversary-reminder/coverage.svg?branch=master)]
+(https://codecov.io/gh/am-tropin/anniversary-reminder?branch=master)
   
 
 ## Table of contents
