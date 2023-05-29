@@ -1,0 +1,13 @@
+name: Use Codecov
+on:
+#   schedule:
+#     - cron: "55 19 28 * *"
+  workflow_dispatch:
+  
+jobs:
+  launch: # my name
+    name: Launch Codecov
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
