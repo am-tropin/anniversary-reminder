@@ -86,26 +86,9 @@ def daterange(start_dt, end_dt):
         yield start_dt + timedelta(n)
 
 
-# In[283]:
+# In[292]:
 
 
-# def check_smart_roundness(n):
-#     """Identifies if number `n` is round and depends on ratio of zero tail.
-    
-#     Args:
-#         n (int): The number.
-        
-#     Returns:
-#         bool
-#     """
-#     len_n = len(str(n))
-#     len_zero = max([d for d in range(len_n) if n % (10**d) == 0])
-    
-#     if n % 100 == 0 and len_zero >= len_n / 2:
-#         return True
-#     else:
-#         return False
-    
 def check_roundness(n, p, d):
     """Identifies if number `n` is round depending on parameters `p` and `d`.
     
@@ -135,6 +118,15 @@ def check_same_digits(n):
         
     Returns:
         bool
+        
+    >>> check_same_digits(111)
+    True
+        
+    >>> check_same_digits(11)
+    False
+        
+    >>> check_same_digits(112)
+    False
     """
     if len(set(list(str(n)))) == 1 and len(str(n)) >= 3:
         return True
@@ -149,6 +141,15 @@ def check_palindrome(n):
         
     Returns:
         bool
+        
+    >>> check_palindrome(1221)
+    True
+    
+    >>> check_palindrome(121)
+    False
+    
+    >>> check_palindrome(1231)
+    False
     """
     if str(n) == str(n)[::-1] and len(str(n)) >= 4:
         return True
@@ -164,6 +165,18 @@ def check_monotonous(n):
         
     Returns:
         bool
+        
+    >>> check_monotonous(1234)
+    True
+        
+    >>> check_monotonous(543)
+    True
+        
+    >>> check_monotonous(103)
+    False
+        
+    >>> check_monotonous(1223)
+    False
     """
     dig = list(map(int, str(n)))
     if len(dig) == len(set(dig)) and dig in [sorted(dig), sorted(dig)[::-1]] and abs(dig[0] - dig[-1]) + 1 == len(dig) and len(dig) >= 3:
@@ -179,6 +192,12 @@ def check_power_of_2(n):
         
     Returns:
         bool
+        
+    >>> check_power_of_2(32)
+    True
+    
+    >>> check_power_of_2(33)
+    False
     """
     if (n & (n - 1) == 0):
         return True
@@ -351,8 +370,7 @@ def range_calendar(start_dt_str, end_dt_str):
     birth_dict = birth_dates()
     output_df_set = []
     
-#     try:
-    if 0 < 1:
+    try:
         for dt in daterange(start_dt, end_dt):
             for event in events.keys():
                 event_dt = events[event]['dt']
@@ -399,8 +417,8 @@ def range_calendar(start_dt_str, end_dt_str):
                 temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
                 output_df_set.append(temp_df)
     
-#     except:
-#         print("Something wrong happened...")
+    except:
+        print("Something wrong happened...")
 
     if len(output_df_set):
         return pd.concat(output_df_set).reset_index(drop=True)
@@ -509,11 +527,44 @@ today_dt_str
 
 
 
-# In[136]:
+# In[294]:
 
 
 if __name__=="__main__":
     print(some_day_counter('2021-04-09'))
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# # Testing
+
+# In[ ]:
+
+
+
+
+
+# In[293]:
+
+
+import doctest
+doctest.testmod()
 
 
 # In[ ]:
