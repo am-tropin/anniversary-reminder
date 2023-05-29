@@ -15,3 +15,4 @@ jupyterlab_server==2.22.1
 pandas==1.5.2
 fastapi==0.95.2
 uvicorn==0.22.0
+pytest==7.3.1
