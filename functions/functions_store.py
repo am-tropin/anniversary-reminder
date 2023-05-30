@@ -123,7 +123,7 @@ def check_roundness(n, p, d):
             else:
                 return False
     else:
-        raise ValueError("Incorrect data format of importance, should be in [1, 2, 3]")
+        raise ValueError("Incorrect data format of importance, should be in 1, 2 or 3.")
         
         
 def check_same_digits(n):

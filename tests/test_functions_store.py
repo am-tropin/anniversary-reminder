@@ -18,7 +18,7 @@ from datetime import datetime
 
 import sys
 sys.path.append('../')
-from functions.functions_store import stod
+from functions.functions_store import stod, daterange
 from functions.functions_store import check_roundness, check_same_digits, check_palindrome, check_monotonous, check_power_of_2
 from functions.functions_store import rule_anniversary, rule_days_divisibility, rule_weeks_divisibility
 # from functions.functions_store import some_day_counter, range_calendar, internal_counter
@@ -92,7 +92,7 @@ def test_for_5_check_roundness():
     assert check_roundness(201, 2, 3) is False
 
 def test_for_valuerror_check_roundness():
-    with pytest.raises(ValueError, match="Incorrect data format of importance, should be in [1, 2, 3]"):
+    with pytest.raises(ValueError, match="Incorrect data format of importance, should be in 1, 2 or 3."):
         check_roundness(500, 0, 2)
 
 
