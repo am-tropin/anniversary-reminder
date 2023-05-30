@@ -172,7 +172,7 @@ def test_for_not_rule_anniversary():
 
 
 def test_for_past_rule_days_divisibility():
-    assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2022, month=6, day=31).date(), 2) is None
+    assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2022, month=7, day=31).date(), 2) is None
 
 # def test_for_corr_rule_days_divisibility():
 #     assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == 1
@@ -188,7 +188,7 @@ def test_for_past_rule_days_divisibility():
 
 
 def test_for_past_rule_weeks_divisibility():
-    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2022, month=6, day=31).date(), 2) is None
+    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2022, month=7, day=31).date(), 2) is None
 
 
 
