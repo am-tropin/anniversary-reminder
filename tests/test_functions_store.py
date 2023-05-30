@@ -27,7 +27,7 @@ from functions.functions_store import stod, check_same_digits, check_palindrome,
 
 
 def test_for_corr_stod():
-    assert stod("2023-05-30") == datetime.date(2023, 5, 30)
+    assert stod("2023-05-30") == datetime(year=2023, month=5, day=30).date()
     
 def test_for_incorr_stod():
     with pytest.raises(ValueError, match="Incorrect data format, should be YYYY-MM-DD"):
