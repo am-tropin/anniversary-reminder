@@ -77,7 +77,7 @@ def stod(dt_str):
 # print(stod(dt_str), type(stod(dt_str)))
 
 
-# In[12]:
+# In[51]:
 
 
 # iterator by date
@@ -97,7 +97,7 @@ def daterange(start_dt, end_dt):
         yield start_dt + timedelta(n)
 
 
-# In[292]:
+# In[48]:
 
 
 def check_roundness(n, p, d):
@@ -105,22 +105,27 @@ def check_roundness(n, p, d):
     
     Args:
         n (int): The number.
+        p (int): The number of importance.
+        d (int): The number for degree of 10.
         
     Returns:
         bool
     """
-    if n >= (10**(d+1)):
-        if n % (10**(d+1)) == 0:
-            return True
-    elif (
-        (n % (10**d) == 0 and p <= 2)
-        or
-        (n % (10**(d+1)) == 0 and p == 3)
-    ):
-        return True
+    if p in [1, 2, 3]:
+        if n >= (10**(d+1)):
+            if n % (10**(d+1)) == 0:
+                return True
+            else: 
+                return False
+        else:
+            if (n % (10**d) == 0 and p <= 2):
+                return True
+            else:
+                return False
     else:
-        return False
-    
+        raise ValueError("Incorrect data format of importance, should be in [1, 2, 3]")
+        
+        
 def check_same_digits(n):
     """Identifies if number `n` consists of the same digits.
     
@@ -196,7 +201,7 @@ def check_monotonous(n):
         return False
     
 def check_power_of_2(n):
-    """Identifies if number `n` is a power of 2.
+    """Identifies if number `n` is a power of 2 and >= 32.
     
     Args:
         n (int): The number.
@@ -204,13 +209,16 @@ def check_power_of_2(n):
     Returns:
         bool
         
+    >>> check_power_of_2(16)
+    False
+        
     >>> check_power_of_2(32)
     True
     
     >>> check_power_of_2(33)
     False
     """
-    if (n & (n - 1) == 0):
+    if (n & (n - 1) == 0) and n >= 32:
         return True
     else:
         return False
@@ -260,7 +268,7 @@ def rule_days_divisibility(dt1, dt2, imp):
         check_monotonous(day_s)
         or
 #         day amount is a power of 2 and not very small
-        check_power_of_2(day_s) and day_s >= 32
+        check_power_of_2(day_s)
     ):
         return day_s
     else:
@@ -291,7 +299,7 @@ def rule_weeks_divisibility(dt1, dt2, imp):
         check_monotonous(week_s)
         or
 #         week amount is a power of 2 and not very small
-        check_power_of_2(week_s) and week_s >= 32
+        check_power_of_2(week_s)
     ):
         return week_s
     else:
