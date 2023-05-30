@@ -471,8 +471,9 @@ def internal_counter(n=1):
 # In[147]:
 
 
-today_dt_str = date.today().strftime(DATE_FORMAT)
-today_dt_str
+# DATE_FORMAT = "%Y-%m-%d"
+# today_dt_str = date.today().strftime(DATE_FORMAT)
+# today_dt_str
 
 
 # In[142]:
