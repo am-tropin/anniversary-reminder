@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[4]:
 
 
 import pytest
 
 
-# In[6]:
+# In[5]:
 
 
-from functions_store import check_same_digits, check_palindrome, check_monotonous, check_power_of_2
+import sys
+sys.path.append('../')
+from functions.functions_store import check_same_digits, check_palindrome, check_monotonous, check_power_of_2
 
 
 # In[ ]:

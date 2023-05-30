@@ -7,7 +7,7 @@
 
 
 
-# In[5]:
+# In[2]:
 
 
 import pandas as pd 
@@ -15,7 +15,7 @@ from datetime import datetime, date, timedelta
 from itertools import combinations
 
 
-# In[146]:
+# In[3]:
 
 
 DATE_FORMAT = "%Y-%m-%d"
@@ -24,10 +24,10 @@ TODAY_DT = date.today() #.strftime(DATE_FORMAT)
 
 # # 1. Loading the csv of dates
 
-# In[7]:
+# In[4]:
 
 
-events_df = pd.read_csv("events.csv")
+events_df = pd.read_csv("../events.csv")
 events_df.head()
 
 
