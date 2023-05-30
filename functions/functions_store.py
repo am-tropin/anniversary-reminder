@@ -7,7 +7,7 @@
 
 
 
-# In[2]:
+# In[1]:
 
 
 import pandas as pd 
@@ -15,41 +15,39 @@ from datetime import datetime, date, timedelta
 from itertools import combinations
 
 
-# In[3]:
+# In[2]:
 
 
-DATE_FORMAT = "%Y-%m-%d"
-TODAY_DT = date.today() #.strftime(DATE_FORMAT)
+# DATE_FORMAT = "%Y-%m-%d"
+# TODAY_DT = date.today() #.strftime(DATE_FORMAT)
 
 
-# # 1. Loading the csv of dates
+# # 1. Functions
 
-# In[4]:
+# ## 1.1. Loading the csv of dates
 
-
-events_df = pd.read_csv("../events.csv")
-events_df.head()
+# In[12]:
 
 
-# In[8]:
+def event_dict():
+    events_df = pd.read_csv("../events.csv")
+    DATE_FORMAT = "%Y-%m-%d"
+    
+    # adding a column dt with format datetime.date()
+    events_df['dt'] = events_df['date'].apply(lambda x: datetime.strptime(x, DATE_FORMAT).date())
+    events = events_df.set_index('event').transpose().to_dict()
+
+    return events
 
 
-# adding a column dt with format datetime.date()
-
-events_df['dt'] = events_df['date'].apply(lambda x: datetime.strptime(x, DATE_FORMAT).date())
-events_df.head()
+# In[15]:
 
 
-# In[9]:
+# events = event_dict()
+# events
 
 
-events = events_df.set_index('event').transpose().to_dict()
-events
-
-
-# # 2. Functions
-
-# ## 2.1. Secondary functions
+# ## 1.2. Secondary functions
 
 # In[10]:
 
@@ -63,6 +61,7 @@ def stod(dt_str):
     Returns:
         Date
     """
+    DATE_FORMAT = "%Y-%m-%d"
     return datetime.strptime(dt_str, DATE_FORMAT).date()
 
 
@@ -297,13 +296,14 @@ def birth_dates():
         Dict
     """
     birth_dict = {}
+    events = event_dict()
     for k, v in events.items():
         if v['category'] == 'birth':
             birth_dict[k] = v['dt']    
     return birth_dict
 
 
-# ## 2.2. Functions for FastAPI
+# ## 1.3. Functions for FastAPI
 
 # In[137]:
 
@@ -317,12 +317,13 @@ def some_day_counter(dt_str=None):
     Returns:
         DataFrame
     """
+    events = event_dict()
     birth_dict = birth_dates()
     output_dict = {}
     
     try:
         if dt_str is None:
-            dt = TODAY_DT
+            dt = date.today()
         else:
             dt = stod(dt_str)
     
@@ -366,7 +367,7 @@ def range_calendar(start_dt_str, end_dt_str):
     start_dt = stod(start_dt_str)
     end_dt = stod(end_dt_str)
     start_dt, end_dt = sorted([start_dt, end_dt])
-    
+    events = event_dict()
     birth_dict = birth_dates()
     output_df_set = []
     
@@ -438,6 +439,7 @@ def internal_counter(n=1):
     Returns:
         DataFrame
     """
+    events = event_dict()
     birth_dict = birth_dates()
     inside_dict = {}
 
@@ -464,12 +466,12 @@ def internal_counter(n=1):
 
 
 
-# # 3. Performing
+# # 2. Performing
 
 # In[147]:
 
 
-today_dt_str = TODAY_DT.strftime(DATE_FORMAT)
+today_dt_str = date.today().strftime(DATE_FORMAT)
 today_dt_str
 
 
