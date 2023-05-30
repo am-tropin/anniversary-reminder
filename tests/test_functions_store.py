@@ -21,7 +21,7 @@ sys.path.append('../')
 from functions.functions_store import stod, daterange
 from functions.functions_store import check_roundness, check_same_digits, check_palindrome, check_monotonous, check_power_of_2
 from functions.functions_store import rule_anniversary, rule_days_divisibility, rule_weeks_divisibility
-# from functions.functions_store import some_day_counter, range_calendar, internal_counter
+# from functions.functions_store import some_day_counter, range_calendar, internal_counter, announcement_upcoming_month
 
 
 # In[ ]:

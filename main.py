@@ -4,7 +4,7 @@
 # In[4]:
 
 
-from functions_store import some_day_counter, range_calendar, internal_counter
+from functions.functions_store import some_day_counter, range_calendar, internal_counter
 
 # API
 from fastapi import FastAPI, Request, Form

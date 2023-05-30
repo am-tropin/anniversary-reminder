@@ -13,6 +13,8 @@
 import pandas as pd 
 from datetime import datetime, date, timedelta
 from itertools import combinations
+import calendar
+import os
 
 
 # In[2]:
@@ -26,11 +28,26 @@ from itertools import combinations
 
 # ## 1.1. Loading the csv of dates
 
+# In[7]:
+
+
+def path_to_events_csv():
+    for _ in range(3):
+        current_folder = os.listdir('.')
+        files = [f for f in current_folder if os.path.isfile(f)]
+        if 'events.csv' in files:
+            path = os.getcwd() + '/' + 'events.csv'
+            break
+        else:
+            current_folder = os.chdir("..")
+    return path
+
+
 # In[12]:
 
 
 def event_dict():
-    events_df = pd.read_csv("../events.csv")
+    events_df = pd.read_csv(path_to_events_csv())
     DATE_FORMAT = "%Y-%m-%d"
     
     # adding a column dt with format datetime.date()
@@ -224,7 +241,7 @@ def check_power_of_2(n):
         return False
 
 
-# In[279]:
+# In[53]:
 
 
 # rules for detecting anniversaries
@@ -486,6 +503,31 @@ def internal_counter(n=1):
 
 
 
+# ## 1.4. For announcements
+
+# In[1]:
+
+
+def announcement_upcoming_month():
+    
+    DATE_FORMAT = "%Y-%m-%d"
+    days_month = lambda dt: calendar.monthrange(dt.year, dt.month)[1]
+    
+    first_dt = date.today().replace(day=1) + timedelta(days_month(date.today()))
+    last_dt = first_dt + timedelta(days_month(first_dt) - 1)
+    
+    df = range_calendar(first_dt.strftime(DATE_FORMAT), last_dt.strftime(DATE_FORMAT))
+    
+    with open('announcement_monthly.txt', 'w') as f:
+        f.write(first_dt.strftime("%B %Y"))
+        f.write('\n\n')
+        
+        for index, row in df.iterrows():
+            f.write("{0} -- {1} {2}s since {3}".format(stod(row['date']).strftime("%d"), row['amount'], row['unit'], row['event']))
+            f.write('\n')
+            
+
+
 # # 2. Performing
 
 # In[147]:
@@ -553,8 +595,8 @@ def internal_counter(n=1):
 # In[294]:
 
 
-if __name__=="__main__":
-    print(some_day_counter('2021-04-09'))
+# if __name__=="__main__":
+#     print(some_day_counter('2021-04-09'))
 
 
 # In[ ]:
@@ -575,7 +617,7 @@ if __name__=="__main__":
 
 
 
-# # Testing
+# # 3. Testing (doctest)
 
 # In[ ]:
 
