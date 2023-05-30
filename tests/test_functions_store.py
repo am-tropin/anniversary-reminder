@@ -12,7 +12,7 @@ import pytest
 
 import sys
 sys.path.append('../')
-from functions.functions_store import check_same_digits, check_palindrome, check_monotonous, check_power_of_2
+from functions.functions_store import stod, check_same_digits, check_palindrome, check_monotonous, check_power_of_2
 
 
 # In[ ]:
@@ -29,8 +29,7 @@ def test_for_corr_stod():
     
 def test_for_incorr_stod():
     with pytest.raises(ValueError, match="Incorrect data format, should be YYYY-MM-DD"):
-                       validate_timestamp("202-05-30")
-
+        stod("202-05-30")
 
 # In[ ]:
 
