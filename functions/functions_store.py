@@ -7,7 +7,7 @@
 
 
 
-# In[1]:
+# In[18]:
 
 
 import pandas as pd 
@@ -49,7 +49,7 @@ def event_dict():
 
 # ## 1.2. Secondary functions
 
-# In[10]:
+# In[40]:
 
 
 def stod(dt_str):
@@ -59,10 +59,22 @@ def stod(dt_str):
         dt_str (str): The string date in `DATE_FORMAT` format.
         
     Returns:
-        Date
+        Date or ValueError
     """
     DATE_FORMAT = "%Y-%m-%d"
-    return datetime.strptime(dt_str, DATE_FORMAT).date()
+    try:
+        return datetime.strptime(dt_str, DATE_FORMAT).date()
+    except ValueError:
+        raise ValueError("Incorrect data format, should be YYYY-MM-DD")
+
+
+# In[47]:
+
+
+# dt_str = ""
+# dt_str = "kek"
+# dt_str = "2023-05-30"
+# print(stod(dt_str), type(stod(dt_str)))
 
 
 # In[12]:
