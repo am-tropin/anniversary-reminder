@@ -202,7 +202,7 @@ def test_for_notempty_date_dict_to_df():
                  'event': 'event 3', 
                  'amount': 32, 
                  'unit': 'day'}
-    df2 = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+    df2 = pd.DataFrame.from_dict(dict_2, orient='index').transpose()
     assert date_dict_to_df(df_1, datetime(year=2023, month=5, day=31).date(), 'event 3', 32, 'day') == pd.concat([df_1, df2]).reset_index(drop=True)
         
 def test_for_empty_date_dict_to_df():
@@ -211,7 +211,7 @@ def test_for_empty_date_dict_to_df():
                  'event': 'event 3', 
                  'amount': 32, 
                  'unit': 'day'}
-    df2 = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+    df2 = pd.DataFrame.from_dict(dict_2, orient='index').transpose()
     assert date_dict_to_df(null_df, datetime(year=2023, month=5, day=31).date(), 'event 3', 32, 'day') == df2
 
 
