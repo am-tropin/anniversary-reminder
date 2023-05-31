@@ -7,11 +7,12 @@
 import pytest
 
 
-# In[15]:
+# In[10]:
 
 
 from datetime import datetime
 import pandas as pd
+
 
 # In[1]:
 
@@ -191,27 +192,28 @@ def test_for_past_rule_days_divisibility():
 # In[2]:
 
 
-def test_for_date_dict_to_df():
+def test_for_notempty_date_dict_to_df():
     dict_1 = {'date': datetime(year=2023, month=5, day=29).date(),
               'event': 'event 1', 
               'amount': 5, 
               'unit': 'day'}
     df_1 = pd.DataFrame.from_dict(dict_1, orient='index').transpose()
-    dict_2 = {'date': datetime(year=2023, month=5, day=30).date(),
-              'event': 'event 2', 
-              'amount': 15, 
-              'unit': 'week'}
-    df_2 = pd.DataFrame.from_dict(dict_1, orient='index').transpose()
-    df_set = [df_1, df_2]
-    temp_dict = {'date': "2023-05-31",
+    dict_2 = {'date': "2023-05-31",
                  'event': 'event 3', 
                  'amount': 32, 
                  'unit': 'day'}
-    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+    df2 = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+    assert date_dict_to_df(df_1, datetime(year=2023, month=5, day=31).date(), 'event 3', 32, 'day') == pd.concat([df_1, df2]).reset_index(drop=True)
+        
+def test_for_empty_date_dict_to_df():
+    null_df = pd.DataFrame(columns=['date', 'event', 'amount', 'unit'])
+    dict_2 = {'date': "2023-05-31",
+                 'event': 'event 3', 
+                 'amount': 32, 
+                 'unit': 'day'}
+    df2 = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+    assert date_dict_to_df(null_df, datetime(year=2023, month=5, day=31).date(), 'event 3', 32, 'day') == df2
 
-    assert date_dict_to_df(df_set, datetime(year=2023, month=5, day=31).date(), 'event 3', 32, 'day') == [df_1, df_2, temp_df]
-        
-        
 
 
 # In[ ]:

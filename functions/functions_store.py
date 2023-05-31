@@ -7,7 +7,7 @@
 
 
 
-# In[18]:
+# In[11]:
 
 
 import pandas as pd 
@@ -356,10 +356,10 @@ def total_age(dt):
         None
 
 
-# In[8]:
+# In[9]:
 
 
-def date_dict_to_df(df_set, dt, event, amount, unit):
+def date_dict_to_df(null_df, dt, event, amount, unit):
     """Added `dt`, `event`, `amount`, `unit` to `df_set`.
     
     Args:
@@ -378,9 +378,8 @@ def date_dict_to_df(df_set, dt, event, amount, unit):
                  'amount': amount, 
                  'unit': unit}
     temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
-    df_set += [temp_df]
     
-    return df_set
+    return pd.concat([null_df, temp_df]).reset_index(drop=True)
 
 
 # ## 1.3. Functions for FastAPI
@@ -449,8 +448,9 @@ def range_calendar(start_dt_str, end_dt_str):
     start_dt, end_dt = sorted([start_dt, end_dt])
     events = event_dict()
     birth_dict = birth_dates()
-    output_df_set = []
-    
+#     output_df_set = []
+    null_df = pd.DataFrame(columns=['date', 'event', 'amount', 'unit'])
+
     try:
         for dt in daterange(start_dt, end_dt):
             for event in events.keys():
@@ -458,19 +458,13 @@ def range_calendar(start_dt_str, end_dt_str):
                 event_imp = events[event]['importance']
                     
                 if rule_anniversary(event_dt, dt):
-                    output_df_set = date_dict_to_df(output_df_set, dt, event, rule_anniversary(event_dt, dt), 'year')
+                    null_df = date_dict_to_df(null_df, dt, event, rule_anniversary(event_dt, dt), 'year')
                 
                 if rule_days_divisibility(event_dt, dt, event_imp):
-                    output_df_set = date_dict_to_df(output_df_set, dt, event, rule_days_divisibility(event_dt, dt, event_imp), 'day')
+                    null_df = date_dict_to_df(null_df, dt, event, rule_days_divisibility(event_dt, dt, event_imp), 'day')
                     
                 if rule_weeks_divisibility(event_dt, dt, event_imp):
-                    output_df_set = date_dict_to_df(output_df_set, dt, event, rule_weeks_divisibility(event_dt, dt, event_imp), 'week')
-                    temp_dict = {'date': dt.strftime('%Y-%m-%d'),
-                                 'event': event, 
-                                 'amount': rule_weeks_divisibility(event_dt, dt, event_imp), 
-                                 'unit': 'week'}
-                    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
-                    output_df_set.append(temp_df)
+                    null_df = date_dict_to_df(null_df, dt, event, rule_weeks_divisibility(event_dt, dt, event_imp), 'week')
                                                     
             total_age_days = total_age(dt)
             if total_age_days and (
@@ -482,13 +476,13 @@ def range_calendar(start_dt_str, end_dt_str):
                 or
                 check_power_of_2(total_age_days)
             ):
-                output_df_set = date_dict_to_df(output_df_set, dt, 'Total age ({})'.format(", ".join(birth_dict.keys())), total_age_days, 'day')
+                null_df = date_dict_to_df(null_df, dt, 'Total age ({})'.format(", ".join(birth_dict.keys())), total_age_days, 'day')
     
     except:
         print("Something wrong happened...")
 
-    if len(output_df_set):
-        return pd.concat(output_df_set).reset_index(drop=True)
+    if len(null_df):
+        return null_df # pd.concat(output_df_set).reset_index(drop=True)
     else:
         return "Sorry, there is no answer :("
 
