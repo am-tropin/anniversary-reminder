@@ -14,8 +14,8 @@ Libraries: pandas, datetime, itertools, fastapi
 [codecov-badge]: https://codecov.io/gh/am-tropin/anniversary-reminder/coverage.svg
 [codecov-link]: https://codecov.io/gh/am-tropin/anniversary-reminder
 
-[codeclimate-badge]: https://codeclimate.com/github/am-tropin/english-song-lyrics.svg
-[codeclimate-link]: https://codeclimate.com/github/am-tropin/english-song-lyrics
+[codeclimate-badge]: https://codeclimate.com/github/am-tropin/anniversary-reminder.svg
+[codeclimate-link]: https://codeclimate.com/github/am-tropin/anniversary-reminder
 
 
 ## Table of contents
