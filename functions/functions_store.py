@@ -378,7 +378,7 @@ def date_dict_to_df(df_set, dt, event, amount, unit):
                  'amount': amount, 
                  'unit': unit}
     temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
-    df_set.append(temp_df)
+    df_set += [temp_df]
     
     return df_set
 
