@@ -339,6 +339,49 @@ def birth_dates():
             birth_dict[k] = v['dt']    
     return birth_dict
 
+def total_age(dt):
+    """Calculates a total age (in days) of all persons with birth dates before `dt`.
+    
+    Args:
+        dt (date): Arbitrary date.
+        
+    Returns:
+        int or None
+    """
+    birth_dict = birth_dates()
+    ages = [(dt - birth_dict[k]).days for k in birth_dict.keys() if dt >= birth_dict[k]]
+    if len(ages):
+        return sum(ages)
+    else:
+        None
+
+
+# In[8]:
+
+
+def date_dict_to_df(df_set, dt, event, amount, unit):
+    """Added `dt`, `event`, `amount`, `unit` to `df_set`.
+    
+    Args:
+        df_set (list): The list of DataFrames.
+        dt (date): Arbitrary date.
+        event (str): The string with event description.
+        amount (int): The number. 
+        unit (str): The unit of time period. 
+        
+    Returns:
+        list
+    """
+    DATE_FORMAT = "%Y-%m-%d"
+    temp_dict = {'date': dt.strftime(DATE_FORMAT),
+                 'event': event, 
+                 'amount': amount, 
+                 'unit': unit}
+    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
+    df_set.append(temp_df)
+    
+    return df_set
+
 
 # ## 1.3. Functions for FastAPI
 
@@ -368,8 +411,8 @@ def some_day_counter(dt_str=None):
             if dt >= birth_dict[k]:
                 output_dict["Age: {0}".format(k)] = (dt - birth_dict[k]).days
 
-        if len(birth_dict.keys()) > 1:
-            output_dict["Age: total"] = sum([(dt - birth_dict[k]).days for k in birth_dict.keys() if dt >= birth_dict[k]])
+        if len(birth_dict.keys()) > 1 and total_age(dt):
+            output_dict["Age: total"] = total_age(dt)
             
         for event in events.keys():
             if events[event]['category'] != 'birth':
@@ -415,22 +458,13 @@ def range_calendar(start_dt_str, end_dt_str):
                 event_imp = events[event]['importance']
                     
                 if rule_anniversary(event_dt, dt):
-                    temp_dict = {'date': dt.strftime('%Y-%m-%d'),
-                                 'event': event, 
-                                 'amount': rule_anniversary(event_dt, dt), 
-                                 'unit': 'year'}
-                    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
-                    output_df_set.append(temp_df)
+                    output_df_set = date_dict_to_df(output_df_set, dt, event, rule_anniversary(event_dt, dt), 'year')
                 
                 if rule_days_divisibility(event_dt, dt, event_imp):
-                    temp_dict = {'date': dt.strftime('%Y-%m-%d'),
-                                 'event': event, 
-                                 'amount': rule_days_divisibility(event_dt, dt, event_imp), 
-                                 'unit': 'day'}
-                    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
-                    output_df_set.append(temp_df)
+                    output_df_set = date_dict_to_df(output_df_set, dt, event, rule_days_divisibility(event_dt, dt, event_imp), 'day')
                     
                 if rule_weeks_divisibility(event_dt, dt, event_imp):
+                    output_df_set = date_dict_to_df(output_df_set, dt, event, rule_weeks_divisibility(event_dt, dt, event_imp), 'week')
                     temp_dict = {'date': dt.strftime('%Y-%m-%d'),
                                  'event': event, 
                                  'amount': rule_weeks_divisibility(event_dt, dt, event_imp), 
@@ -438,22 +472,17 @@ def range_calendar(start_dt_str, end_dt_str):
                     temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
                     output_df_set.append(temp_df)
                                                     
-            total_age = sum([(dt - birth_dict[k]).days for k in birth_dict.keys() if dt >= birth_dict[k]])
-            if (
-                total_age % 1000 in range(len(birth_dict))
+            total_age_days = total_age(dt)
+            if total_age_days and (
+                total_age_days % 1000 in range(len(birth_dict))
                 or
-                check_same_digits(total_age)
+                check_same_digits(total_age_days)
                 or
-                check_monotonous(total_age)
+                check_monotonous(total_age_days)
                 or
-                check_power_of_2(total_age)
+                check_power_of_2(total_age_days)
             ):
-                temp_dict = {'date': dt.strftime('%Y-%m-%d'),
-                             'event': 'Total age ({})'.format(", ".join(birth_dict.keys())), 
-                             'amount': total_age, 
-                             'unit': 'day'}
-                temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
-                output_df_set.append(temp_df)
+                output_df_set = date_dict_to_df(output_df_set, dt, 'Total age ({})'.format(", ".join(birth_dict.keys())), total_age_days, 'day')
     
     except:
         print("Something wrong happened...")
@@ -483,15 +512,17 @@ def internal_counter(n=1):
     try:
         if len(birth_dict.keys()) > 1:
             for (k1, k2) in combinations(birth_dict.keys(), 2):
-                if abs((birth_dict[k1] - birth_dict[k2]).days) % n == 0:
-                    inside_dict["Age difference between {0} and {1}".format(k1, k2)] = abs((birth_dict[k1] - birth_dict[k2]).days)
+                between_days = abs((birth_dict[k1] - birth_dict[k2]).days)
+                if between_days % n == 0:
+                    inside_dict["Age difference between {0} and {1}".format(k1, k2)] = between_days
         if len(events.keys()) > 1:
             for (event1, event2) in combinations(events.keys(), 2):
+                between_days = abs((events[event1]['dt'] - events[event2]['dt']).days)
                 if (events[event1]['category'], events[event2]['category']) != ('birth', 'birth') and (
-                    abs((events[event1]['dt'] - events[event2]['dt']).days) % n == 0 and 
+                    between_days % n == 0 and 
                     events[event1]['dt'] < events[event2]['dt']
                 ):
-                    inside_dict["From {} to {}".format(event1, event2)] = abs((events[event1]['dt'] - events[event2]['dt']).days)
+                    inside_dict["From {} to {}".format(event1, event2)] = between_days
 
     except:
         print("Something wrong happened...")
