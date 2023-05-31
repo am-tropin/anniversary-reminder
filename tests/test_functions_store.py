@@ -179,14 +179,42 @@ def test_for_not_rule_anniversary():
 def test_for_past_rule_days_divisibility():
     assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2022, month=7, day=31).date(), 2) is None
 
-# def test_for_corr_rule_days_divisibility():
-#     assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == 1
+def test_for_f10_rule_days_divisibility():
+    assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == [None, 62][check_roundness(62, 2, 2)]
 
-# def test_for_same_rule_days_divisibility():
-#     assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date()) is None
+def test_for_f11_rule_days_divisibility():
+    assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2024, month=3, day=25).date(), 2) == [None, 300][check_roundness(300, 2, 2)]
 
-# def test_for_not_rule_days_divisibility():
-#     assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2024, month=7, day=31).date()) is None
+def test_for_f20_rule_days_divisibility():
+    assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == [None, 62][check_same_digits(62)]
+
+def test_for_f21_rule_days_divisibility():
+    assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=9, day=18).date(), 2) == [None, 111][check_same_digits(111)]
+
+def test_for_f30_rule_days_divisibility():
+    assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == [None, 62][check_monotonous(62)]
+
+def test_for_f31_rule_days_divisibility():
+    assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=9, day=30).date(), 2) == [None, 123][check_monotonous(123)]
+
+def test_for_f40_rule_days_divisibility():
+    assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == [None, 62][check_power_of_2(62)]
+
+def test_for_f41_rule_days_divisibility():
+    assert rule_days_divisibility(datetime(year=2023, month=5, day=28).date(), datetime(year=2023, month=7, day=31).date(), 2) == [None, 64][check_power_of_2(64)]
+
+
+# In[ ]:
+
+
+def test_for_past_rule_weeks_divisibility():
+    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2022, month=7, day=31).date(), 2) is None
+
+
+# In[33]:
+
+
+# datetime(year=2024, month=3, day=25).date() - datetime(year=2023, month=5, day=30).date()
 
 
 # In[2]:
