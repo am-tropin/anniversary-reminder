@@ -210,11 +210,35 @@ def test_for_f41_rule_days_divisibility():
 def test_for_past_rule_weeks_divisibility():
     assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2022, month=7, day=31).date(), 2) is None
 
+def test_for_f10_rule_weeks_divisibility():
+    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == None # 62, check_roundness
 
-# In[33]:
+def test_for_f11_rule_weeks_divisibility():
+    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=8, day=8).date(), 2) == 10 # 70, check_roundness
+
+# def test_for_f20_rule_weeks_divisibility():
+#     assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == None # 62, check_same_digits
+
+def test_for_f21_rule_weeks_divisibility():
+    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2025, month=7, day=15).date(), 2) == 111 # 777, check_same_digits
+
+# def test_for_f30_rule_weeks_divisibility():
+#     assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == None # 62, check_monotonous
+
+def test_for_f31_rule_weeks_divisibility():
+    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2025, month=10, day=7).date(), 2) == 123 # 861, check_monotonous
+
+# def test_for_f40_rule_weeks_divisibility():
+#     assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == None # 62, check_power_of_2
+
+def test_for_f41_rule_weeks_divisibility():
+    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=28).date(), datetime(year=2024, month=1, day=9).date(), 2) == 32 # 224, check_power_of_2
 
 
-# datetime(year=2024, month=3, day=25).date() - datetime(year=2023, month=5, day=30).date()
+# In[45]:
+
+
+# datetime(year=2024, month=1, day=9).date() - datetime(year=2023, month=5, day=30).date()
 
 
 # In[2]:
