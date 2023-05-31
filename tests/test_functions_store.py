@@ -13,7 +13,7 @@ import pytest
 from datetime import datetime
 
 
-# In[16]:
+# In[1]:
 
 
 import sys
@@ -21,7 +21,10 @@ sys.path.append('../')
 from functions.functions_store import stod, daterange
 from functions.functions_store import check_roundness, check_same_digits, check_palindrome, check_monotonous, check_power_of_2
 from functions.functions_store import rule_anniversary, rule_days_divisibility, rule_weeks_divisibility
-# from functions.functions_store import some_day_counter, range_calendar, internal_counter, announcement_upcoming_month
+# from functions.functions_store import event_dict, birth_dates, total_age
+from functions.functions_store import date_dict_to_df
+# from functions.functions_store import some_day_counter, range_calendar, internal_counter, 
+# from functions.functions_store import announcement_upcoming_month
 
 
 # In[ ]:
@@ -34,12 +37,13 @@ from functions.functions_store import rule_anniversary, rule_days_divisibility, 
 
 
 # depend on ../event.csv:
-
 # event_dict
 # birth_dates
-# some_day_counter
-# range_calendar
-# internal_counter
+# total_age
+
+
+# depend on announcement_monthly.txt:
+# announcement_upcoming_month
 
 
 # depend on other functions:
@@ -184,18 +188,30 @@ def test_for_past_rule_days_divisibility():
 #     assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2024, month=7, day=31).date()) is None
 
 
-# In[ ]:
+# In[2]:
 
 
-def test_for_past_rule_weeks_divisibility():
-    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2022, month=7, day=31).date(), 2) is None
+def test_for_date_dict_to_df():
+    dict_1 = {'date': datetime(year=2023, month=5, day=29).date(),
+              'event': 'event 1', 
+              'amount': 5, 
+              'unit': 'day'}
+    df_1 = pd.DataFrame.from_dict(dict_1, orient='index').transpose()
+    dict_2 = {'date': datetime(year=2023, month=5, day=30).date(),
+              'event': 'event 2', 
+              'amount': 15, 
+              'unit': 'week'}
+    df_2 = pd.DataFrame.from_dict(dict_1, orient='index').transpose()
+    df_set = [df_1, df_2]
+    temp_dict = {'date': "2023-05-31",
+                 'event': 'event 3', 
+                 'amount': 32, 
+                 'unit': 'day'}
+    temp_df = pd.DataFrame.from_dict(temp_dict, orient='index').transpose()
 
-
-
-# In[ ]:
-
-
-
+    assert date_dict_to_df(df_set, datetime(year=2023, month=5, day=31).date(), 'event 3', 32, 'day') == [df_1, df_2, temp_df]
+        
+        
 
 
 # In[ ]:
