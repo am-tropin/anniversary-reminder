@@ -201,7 +201,7 @@ def test_for_f40_rule_days_divisibility():
     assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == [None, 62][check_power_of_2(62)]
 
 def test_for_f41_rule_days_divisibility():
-    assert rule_days_divisibility(datetime(year=2023, month=5, day=28).date(), datetime(year=2023, month=7, day=31).date(), 2) == [None, 64][check_power_of_2(64)]
+    assert rule_days_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=8, day=2).date(), 2) == [None, 64][check_power_of_2(64)]
 
 
 # In[ ]:
@@ -232,13 +232,7 @@ def test_for_f31_rule_weeks_divisibility():
 #     assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2023, month=7, day=31).date(), 2) == None # 62, check_power_of_2
 
 def test_for_f41_rule_weeks_divisibility():
-    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=28).date(), datetime(year=2024, month=1, day=9).date(), 2) == 32 # 224, check_power_of_2
-
-
-# In[45]:
-
-
-# datetime(year=2024, month=1, day=9).date() - datetime(year=2023, month=5, day=30).date()
+    assert rule_weeks_divisibility(datetime(year=2023, month=5, day=30).date(), datetime(year=2024, month=1, day=9).date(), 2) == 32 # 224, check_power_of_2
 
 
 # In[2]:
