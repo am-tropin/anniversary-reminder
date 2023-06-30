@@ -57,7 +57,7 @@ You can use [a default dataset with events of Elizabeth II and Prince Philip's l
 ```bash
   http://127.0.0.1:8000/docs/
 ```
-and use on of the following boxes to get info in dictionary view:
+and use one of the following boxes to get info in dictionary view:
 
 - **Get Some Day Counter**: Type a date in format YYYY-MM-DD and know how many days how many days have passed since each event.
 - **Get Range Calendar**: Type start and end dates in format YYYY-MM-DD and know the anniversaries based on list of rules (see below). 
